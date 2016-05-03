@@ -4,7 +4,7 @@ I was tired of changing my makefiles everytime I created new directories, so I m
 
 ### How to use
 
-Create your Flags.txt file or modify the example to add the compilation flags of your project, then execute this script.
+Create your 'flags.txt' file or modify the example to add the compilation flags of your project, then execute this script.
 The arguments needed to run this script are the path to source code and the name of the executable. This script will work if the code is divided in two folders: 'include' (wich contains all the .h and .hpp files) and 'src' (wich contains the .cpp files).
 
 ### License: GPL3
