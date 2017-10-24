@@ -11,9 +11,8 @@ class MyApp:
         directory = sys.argv[1]
         path = os.path.dirname(os.path.abspath(__file__))
         src = os.path.join(path, directory, 'src')
-        include = os.path.join(path, directory, 'include')
-        if not os.path.isdir(src) or not os.path.isdir(include):
-            print ('That folder doesnt contain a src or include folder')
+        if not os.path.isdir(src):
+            print ('That folder doesnt contain a src folder')
             return
         CXXFLAGS = ''
         LDFLAGS = ''
@@ -31,29 +30,22 @@ class MyApp:
             print ('Missing data in Flags.txt')
             return
         list_src = []
-        list_include = []
         for folder in os.listdir(src):
             if os.path.isdir(os.path.join(src, folder)):
                 list_src.append(folder)
-        for folder in os.listdir(include):
-            if os.path.isdir(os.path.join(include, folder)):
-                list_include.append(folder)
         string = 'EXEC := ' + sys.argv[2] + '\n\nDIRSRC := src/\n\
-DIROBJ := obj/\n\
-DIRHEA := include/\n\n'
+DIROBJ := obj/\n'
         for folder in list_src:
             string += 'DIRSRC' + folder.upper() + ':= $(DIRSRC)' + folder + '/\n'
-        for folder in list_include:
-            string += 'DIRHEA' + folder.upper() + ':= $(DIRHEA)' + folder + '/\n'
         string += '\nCXX := g++\n\n\
 # Compilation flags --------------------------------------------------\n\
-CXXFLAGS := -I $(DIRHEA)'
-        for folder in list_include:
-            string += ' -I $(DIRHEA' + folder.upper() + ')'
+CXXFLAGS := -I $(DIRSRC)'
+        for folder in list_src:
+            string += ' -I $(DIRSRC' + folder.upper() + ')'
         string += CXXFLAGS + '\n\n\
 # Linker flags -------------------------------------------------------\n\
-LDFLAGS := '  + LDFLAGS + '\n\
-LDLIBS := ' + LDLIBS + '\n\n\
+LDFLAGS :='  + LDFLAGS + '\n\
+LDLIBS :=' + LDLIBS + '\n\n\
 # Compilation mode (-mode=release -mode=debug) -----------------------\n\
 ifeq ($(mode), release)\n\
 \tCXXFLAGS += -O2 -D_RELEASE\n\
@@ -72,7 +64,7 @@ info:\n\
 \t@echo "Building $(EXEC) in mode $(mode)"\n\
 \t@echo "--------------------------------"\n\
 \t@echo ""\n\n\
-# Enlazado -----------------------------------------------------------\n\
+# Link ---------------------------------------------------------------\n\
 $(EXEC): $(OBJS)\n\
 \t@echo "Linking: $(notdir $^)"\n\
 \t@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)\n\n\
@@ -87,7 +79,7 @@ $(DIROBJ)%.o: $(DIRSRC)%.cpp\n\
 \t@$(CXX) $(CXXFLAGS) -c $< -o $@ $(LDLIBS)'
         string += '\n\n# Cleaning ---------------------------------------------\n\
 clean:\n\
-\trm -f *.log $(EXEC) *~ $(DIROBJ)* $(DIRSRC)*~ $(DIRHEA)*~'
+\trm -f *.log $(EXEC) *~ $(DIROBJ)* $(DIRSRC)*~'
 
         with open('makefile', 'w') as wfile:
             wfile.write(string)
